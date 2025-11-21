@@ -1,6 +1,16 @@
 // controller/auth.mjs
 import express from "express";
 import * as authRepository from "../data/auth.mjs";
+import * as bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
+const secretKey = "abcdefg1234!@#$";
+const bcryptSaltRounts = 0;
+const jwtExpiresInDays = "2d";
+
+async function createJwtToken(id) {
+  return jwt.sign({ id }, secretKey, { expiresIn: jwtExpiresInDays });
+}
 
 export async function getUsers(req, res, next) {
   const data = await authRepository.getAll();
@@ -9,12 +19,17 @@ export async function getUsers(req, res, next) {
 
 export async function signupAuth(req, res, next) {
   const { userid, password, name, email } = req.body;
-  const auth = await authRepository.signup(userid, password, name, email);
-  if (auth) {
-    res.status(200).json({ message: "회원가입 되었습니다." });
-  } else {
-    res.status(404).json({ message: "회원가입 오류" });
+
+  const found = await authRepository.findByUserid(userid);
+  if (found) {
+    return res.status(409).json({ message: `${userid}가 이미 존재합니다.` });
   }
+
+  const hashed = bcrypt.hashSync(password, bcryptSaltRounts);
+  const user = await authRepository.signup(userid, hashed, name, email);
+
+  const token = await createJwtToken(user.id);
+  res.status(201).json({ token, user });
 }
 
 export async function loginAuth(req, res, next) {
@@ -26,15 +41,3 @@ export async function loginAuth(req, res, next) {
     res.status(404).json({ message: `${err}` });
   }
 }
-
-// export async function login(req, res, next) {
-//   const { userid, password } = req.body;
-//   const user = await AR.loginUser(userid, password);
-//   if (user) {
-//     res.status(200).json({ message: `${userid}님 로그인 되었습니다.` });
-//   } else {
-//     res
-//       .status(404)
-//       .json({ message: `${userid}님 아이디 또는 비밀번호가 맞지 않습니다.` });
-//   }
-// }
