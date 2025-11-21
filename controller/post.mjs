@@ -30,7 +30,21 @@ export async function createPost(req, res, next) {
 }
 
 // 포스트를 수정하는 함수
-export async function updatePost(req, res, next) {}
+export async function updatePost(req, res, next) {
+  const id = req.params.id;
+  const text = req.body.text;
+  const post = await postRepository.update(id, text);
+  if (post) {
+    res.status(201).json(post);
+  } else {
+    res.status(404).json({ message: `${id}에 대한 포스트가 없습니다.` });
+  }
+}
 
 // 포스트를 삭제하는 함수
-export async function deletePost(req, res, next) {}
+export async function deletePost(req, res, next) {
+  const id = req.params.id;
+  console.log(id);
+  await postRepository.remove(id);
+  res.status(204).json({ message: `${id}에 대한 포스트가 삭제되었습니다.` });
+}
