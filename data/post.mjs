@@ -1,3 +1,4 @@
+// data/post.mjs
 let posts = [
   {
     id: "1",
