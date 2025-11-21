@@ -34,9 +34,22 @@ export async function signupAuth(req, res, next) {
 
 export async function loginAuth(req, res, next) {
   const { userid, password } = req.body;
-  const { auth, err } = await authRepository.login(userid, password);
+  const user = await authRepository.findByUserid(userid);
+  console.log(user);
+  if (!user) {
+    return res.status(401).json({ message: "유저를 찾을 수 없습니다." });
+  }
+  const isValidPassword = await bcrypt.compare(password, user.password);
+  console.log(isValidPassword);
+  if (!isValidPassword) {
+    return res.status(401).json({ message: "비밀번호를 확인하세요" });
+  }
+  const auth = "s";
+  const err = "erorr";
+  //const { auth, err } = await authRepository.login(userid, password);
   if (auth) {
-    res.status(200).json({ message: `${userid}님 로그인 되었습니다.` });
+    const token = await createJwtToken(user.id);
+    res.status(200).json({ token, user });
   } else {
     res.status(404).json({ message: `${err}` });
   }
