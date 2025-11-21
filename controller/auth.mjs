@@ -54,3 +54,11 @@ export async function loginAuth(req, res, next) {
     res.status(404).json({ message: `${err}` });
   }
 }
+
+export async function me(req, res, next) {
+  // const user = await authRepository.findByUserid(req.id);
+  // if (!user) {
+  //   res.status(404).json({ message: "일치하는 사용자가 없습니다." });
+  // }
+  // res.status(200).json({ token: req.token, userid: user.userid });
+}
