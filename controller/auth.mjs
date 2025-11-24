@@ -3,13 +3,12 @@ import express from "express";
 import * as authRepository from "../data/auth.mjs";
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
-const secretKey = "abcdefg1234!@#$";
-const bcryptSaltRounts = 0;
-const jwtExpiresInDays = "2d";
+import { config } from "../config.mjs";
 
 async function createJwtToken(id) {
-  return jwt.sign({ id }, secretKey, { expiresIn: jwtExpiresInDays });
+  return jwt.sign({ id }, config.jwt.secretKey, {
+    expiresIn: config.jwt.expiresInSec,
+  });
 }
 
 export async function getUsers(req, res, next) {
@@ -25,7 +24,7 @@ export async function signupAuth(req, res, next) {
     return res.status(409).json({ message: `${userid}가 이미 존재합니다.` });
   }
 
-  const hashed = bcrypt.hashSync(password, bcryptSaltRounts);
+  const hashed = bcrypt.hashSync(password, config.bcrypt.saltRounds);
   const user = await authRepository.signup(userid, hashed, name, email);
 
   const token = await createJwtToken(user.id);
