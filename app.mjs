@@ -17,5 +17,5 @@ app.use((req, res, next) => {
 });
 
 app.listen(config.host.port, () => {
-  console.log("서버 실행중");
+  console.log("서버 실행중", config.host.port);
 });

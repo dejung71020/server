@@ -24,7 +24,7 @@ export async function signupAuth(req, res, next) {
     return res.status(409).json({ message: `${userid}가 이미 존재합니다.` });
   }
 
-  const hashed = bcrypt.hashSync(password, config.bcrypt.saltRounds);
+  const hashed = bcrypt.hashSync(password, config.bycrpt.saltRounds);
   const user = await authRepository.signup(userid, hashed, name, email);
 
   const token = await createJwtToken(user.id);

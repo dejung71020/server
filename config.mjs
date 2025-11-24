@@ -15,10 +15,10 @@ export const config = {
     secretKey: required("JWT_SECRET"),
     expiresInSec: parseInt(required("JWT_EXPIRES_SEC")),
   },
-  bycript: {
+  bycrpt: {
     saltRounds: parseInt(required("BCRYPT_SALT_ROUNDS"), 12),
   },
   host: {
-    port: parseInt(required("HOST_POST", 9090)),
+    port: parseInt(required("HOST_PORT", 9090)),
   },
 };
