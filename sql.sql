@@ -3,7 +3,7 @@ USE ai;
 CREATE TABLE users(
 	idx INT AUTO_INCREMENT PRIMARY KEY,
     userid VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(256) UNIQUE NOT NULL,
+    password VARCHAR(256) NOT NULL,
     name VARCHAR(20) NOT NULL,
     email VARCHAR(50) NOT NULL,
     url VARCHAR(256)
@@ -15,4 +15,12 @@ CREATE TABLE posts(
     createdAt DATETIME DEFAULT NOW(),
     text VARCHAR(2048) NOT NULL,
     FOREIGN KEY(useridx) references users(idx)
-)
+);
+
+SELECT * FROM users;
+SELECT * FROM posts;
+
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE users;
+DROP TABLE posts;
+SET FOREIGN_KEY_CHECKS = 1;

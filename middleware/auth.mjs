@@ -20,15 +20,15 @@ export const isAuth = async (req, res, next) => {
       console.log("토큰 에러", error);
       return res.status(401).json(AUTH_ERROR);
     }
-    console.log("디코드 성공", decoded);
-    const user = await authRepository.findById(decoded.id);
+    console.log("디코드 성공", decoded.idx);
+    const user = await authRepository.findById(decoded.idx);
     if (!user) {
       console.log("아이디 없음");
       return res.status(401).json(AUTH_ERROR);
     }
-    console.log("아이디 있음", user);
+    console.log("아이디 있음", user.idx);
     console.log("user.userid: ", user.userid);
-    req.userid = user.userid;
+    req.idx = user.idx;
     next();
   });
 };

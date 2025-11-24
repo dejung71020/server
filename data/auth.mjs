@@ -1,63 +1,18 @@
 // data/auth.mjs
-let users = [
-  {
-    id: "1",
-    userid: "apple",
-    password: "1111",
-    name: "김사과",
-    email: "apple@apple.com",
-    url: "https://randomuser.me/api/portraits/women/32.jpg",
-  },
-  {
-    id: "2",
-    userid: "banana",
-    password: "2222",
-    name: "반하나",
-    email: "banana@banana.com",
-    url: "https://randomuser.me/api/portraits/women/44.jpg",
-  },
-  {
-    id: "3",
-    userid: "orange",
-    password: "3333",
-    name: "오렌지",
-    email: "orange@orange.com",
-    url: "https://randomuser.me/api/portraits/men/11.jpg",
-  },
-  {
-    id: "4",
-    userid: "berry",
-    password: "4444",
-    name: "배애리",
-    email: "orange@orange.com",
-    url: "https://randomuser.me/api/portraits/women/52.jpg",
-  },
-  {
-    id: "5",
-    userid: "melon",
-    password: "5555",
-    name: "이메론",
-    email: "orange@orange.com",
-    url: "https://randomuser.me/api/portraits/men/29.jpg",
-  },
-];
+import { db } from "../db/database.mjs";
 
-export async function signup(userid, password, name, email) {
-  const user = {
-    id: Object.keys(users).length + 1,
-    userid,
-    password,
-    name,
-    email,
-    url: "에라잇아무거나 넣어",
-  };
-  users = [user, ...users];
-
-  return user;
+export async function signup(user) {
+  const { userid, password, name, email, url } = user;
+  return db
+    .execute(
+      "INSERT INTO users (userid, password, name, email, url) VALUES (?, ?, ?, ?, ?)",
+      [userid, password, name, email, url]
+    )
+    .then((result) => result[0].insertId);
 }
 
 export async function getAll() {
-  return users;
+  return db.execute("SELECT * FROM users").then((result) => result[0]);
 }
 
 export async function login(id, password) {
@@ -78,12 +33,18 @@ export async function login(id, password) {
 }
 
 export async function findByUserid(userid) {
-  const user = users.find((user) => user.userid === userid);
-  return user;
+  return db
+    .execute("SELECT idx, password FROM users WHERE userid=?", [userid])
+    .then((result) => {
+      console.log(result);
+      return result[0][0];
+    });
 }
 
-export async function findById(id) {
-  return users.find((user) => user.id === id);
+export async function findById(idx) {
+  return db
+    .execute("SELECT idx, userid FROM users WHERE idx=?", [idx])
+    .then((result) => result[0][0]);
 }
 
 // export async function loginUser(userid, password) {

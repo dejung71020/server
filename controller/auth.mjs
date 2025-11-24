@@ -1,12 +1,12 @@
 // controller/auth.mjs
-import express from "express";
+import express, { urlencoded } from "express";
 import * as authRepository from "../data/auth.mjs";
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { config } from "../config.mjs";
 
-async function createJwtToken(id) {
-  return jwt.sign({ id }, config.jwt.secretKey, {
+async function createJwtToken(idx) {
+  return jwt.sign({ idx }, config.jwt.secretKey, {
     expiresIn: config.jwt.expiresInSec,
   });
 }
@@ -17,17 +17,23 @@ export async function getUsers(req, res, next) {
 }
 
 export async function signupAuth(req, res, next) {
-  const { userid, password, name, email } = req.body;
+  const { userid, password, name, email, url } = req.body;
 
-  const found = await authRepository.findByUserid(userid);
-  if (found) {
-    return res.status(409).json({ message: `${userid}가 이미 존재합니다.` });
-  }
+  // const found = await authRepository.findByUserid(userid);
+  // if (found) {
+  //   return res.status(409).json({ message: `${userid}가 이미 존재합니다.` });
+  // }
 
   const hashed = bcrypt.hashSync(password, config.bycrpt.saltRounds);
-  const user = await authRepository.signup(userid, hashed, name, email);
+  const user = await authRepository.signup({
+    userid,
+    password: hashed,
+    name,
+    email,
+    url,
+  });
 
-  const token = await createJwtToken(user.id);
+  const token = await createJwtToken(user.idx);
   res.status(201).json({ token, user });
 }
 
@@ -45,9 +51,8 @@ export async function loginAuth(req, res, next) {
   }
   const auth = "s";
   const err = "erorr";
-  //const { auth, err } = await authRepository.login(userid, password);
   if (auth) {
-    const token = await createJwtToken(user.id);
+    const token = await createJwtToken(user.idx);
     res.status(200).json({ token, user });
   } else {
     res.status(404).json({ message: `${err}` });
@@ -55,9 +60,11 @@ export async function loginAuth(req, res, next) {
 }
 
 export async function me(req, res, next) {
-  // const user = await authRepository.findByUserid(req.id);
-  // if (!user) {
-  //   res.status(404).json({ message: "일치하는 사용자가 없습니다." });
-  // }
-  // res.status(200).json({ token: req.token, userid: user.userid });
+  const user = await authRepository.findById(req.idx);
+  if (!user) {
+    res.status(404).json({ message: "일치하는 사용자가 없습니다." });
+  }
+  res
+    .status(200)
+    .json({ token: req.token, useridx: user.idx, userid: user.userid });
 }
