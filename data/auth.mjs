@@ -82,6 +82,10 @@ export async function findByUserid(userid) {
   return user;
 }
 
+export async function findById(id) {
+  return users.find((user) => user.id === id);
+}
+
 // export async function loginUser(userid, password) {
 //   const user = users.find(
 //     (user) => user.userid === userid && user.password === password
