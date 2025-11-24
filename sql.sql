@@ -1,0 +1,18 @@
+USE ai;
+
+CREATE TABLE users(
+	idx INT AUTO_INCREMENT PRIMARY KEY,
+    userid VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(256) UNIQUE NOT NULL,
+    name VARCHAR(20) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    url VARCHAR(256)
+);
+
+CREATE TABLE posts(
+	idx INT AUTO_INCREMENT PRIMARY KEY,
+    useridx INT NOT NULL,
+    createdAt DATETIME DEFAULT NOW(),
+    text VARCHAR(2048) NOT NULL,
+    FOREIGN KEY(useridx) references users(idx)
+)

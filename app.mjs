@@ -3,6 +3,7 @@ import express from "express";
 import postRouter from "./router/posts.mjs";
 import authRouter from "./router/auth.mjs";
 import { config } from "./config.mjs";
+import { db } from "./db/database.mjs";
 
 const app = express();
 
@@ -16,6 +17,9 @@ app.use((req, res, next) => {
   res.sendStatus(404);
 });
 
+db.getConnection().then((connection) => {
+  console.log("DB 연결 성공:", connection.threadId);
+});
 app.listen(config.host.port, () => {
   console.log("서버 실행중", config.host.port);
 });
