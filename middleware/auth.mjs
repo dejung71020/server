@@ -28,7 +28,7 @@ export const isAuth = async (req, res, next) => {
     }
     console.log("아이디 있음", user);
     console.log("user.userid: ", user.userid);
-    req.userid = user.userid;
+    req.id = user.id;
     next();
   });
 };

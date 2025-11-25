@@ -17,7 +17,7 @@ export async function getUsers(req, res, next) {
 }
 
 export async function signupAuth(req, res, next) {
-  const { userid, password, name, email } = req.body;
+  const { userid, password, name, email, url } = req.body;
 
   const found = await authRepository.findByUserid(userid);
   if (found) {
@@ -25,8 +25,15 @@ export async function signupAuth(req, res, next) {
   }
 
   const hashed = bcrypt.hashSync(password, config.bycrpt.saltRounds);
-  const user = await authRepository.signup(userid, hashed, name, email);
 
+  const user = await authRepository.signup({
+    userid,
+    password: hashed,
+    name,
+    email,
+    url,
+  });
+  console.log(user);
   const token = await createJwtToken(user.id);
   res.status(201).json({ token, user });
 }
@@ -55,9 +62,9 @@ export async function loginAuth(req, res, next) {
 }
 
 export async function me(req, res, next) {
-  // const user = await authRepository.findByUserid(req.id);
-  // if (!user) {
-  //   res.status(404).json({ message: "일치하는 사용자가 없습니다." });
-  // }
-  // res.status(200).json({ token: req.token, userid: user.userid });
+  const user = await authRepository.findById(req.id);
+  if (!user) {
+    res.status(404).json({ message: "일치하는 사용자가 없습니다." });
+  }
+  res.status(200).json({ token: req.token, userid: user.userid });
 }
