@@ -8,3 +8,18 @@ Bearer
     이 토큰을 가지고 있는 사람은 인증된 사용자로 간주한다.
 
     Authorization: Bearer QWEJASKDJLKSDF==
+
+
+Mongoose (몽구스)
+    Node.js에서 MongoDB를 쉽게 다루기 위한 ODM 라이브러리
+    Mongo DB는 데이터의 구조가 더러워지는 경우가 많음
+    스키마 개념을 추가해서 문서를 정의하도록 도와줌
+    MongoDB + 타입/유효성 검사 + 모델 개념
+
+Mongoose의 사용 흐름
+    설치 => DB연결 => 스키마 정의 => 모델 생성(컬렉션) =>  CRUD 수행
+
+ODM (Object Data Modeling)
+    NoSQL 데이터베이스 객체 기반 라이브러리 또는 기술
+    
+    SQL은 ORM(Object Relational Mapping)을 사용

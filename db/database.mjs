@@ -1,19 +1,20 @@
 import { config } from "../config.mjs";
-import MongoDB from "mongodb";
+import Mongoose from "mongoose";
+// import MongoDB from "mongodb";
 
-let db;
+// let db;
 
 export async function connectDB() {
-  const client = await MongoDB.MongoClient.connect(config.db.host);
-  db = client.db("AI"); // 기본 DB 선택
-
-  return db;
+  return Mongoose.connect(config.db.host, { dbName: "AI" });
 }
 
-export function getUsers() {
-  return db.collection("users");
-}
-
-export function getPosts() {
-  return db.collection("posts");
+// 스키마 기능추가
+// _id 값을 문자열로 변환한 id 변수 생성
+// JSON 또는 객체 변환시 id 변수(virtual) 도 포함
+export function useVirtualId(schema) {
+  schema.virtual("id").get(function () {
+    return this._id.toString();
+  });
+  schema.set("toJSON", { virtual: true });
+  schema.set("toObject", { virtual: true });
 }
